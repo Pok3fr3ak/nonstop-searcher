@@ -1,0 +1,8 @@
+import { Presentation } from "./presentation";
+
+export interface FetchingStructure{
+    name: string, 
+    link?: string, 
+    presentations: Presentation[]
+    nonstop?: boolean
+}

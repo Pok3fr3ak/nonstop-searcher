@@ -25,3 +25,38 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+main{
+  display: grid;
+  gap: 0.5em;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+}
+
+.filmCard{
+  border: 1px solid grey;
+  padding: 1em;
+  border-radius: 10px;
+}
+
+.filmCard h1{
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+.filmCard ul{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.filmCard li{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.filmCard ul li > * {
+  margin-right: 0.5em;
+}
