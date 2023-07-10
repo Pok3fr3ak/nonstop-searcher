@@ -1,3 +1,4 @@
+import { Utils } from "@/classes/Utils";
 import { FetchingStructure } from "@/interfaces/fetchingStructure";
 import { Presentation } from "@/interfaces/presentation";
 import { Browser } from "puppeteer";
@@ -5,7 +6,8 @@ import { Browser } from "puppeteer";
 export default async function getFilmcasinoData(browser: Browser): Promise<FetchingStructure[]> {
     const page = await browser.newPage();
 
-    await page.goto("http://filmcasino.at/programm/");
+    await page.goto("http://www.filmcasino.at/programm/", { waitUntil: "domcontentloaded" }).catch(err => console.log(err)
+    );
 
     return new Promise(async (resolve, reject)=>{
         const filmcasinoCrawl = await page.evaluate(() => {
@@ -20,19 +22,22 @@ export default async function getFilmcasinoData(browser: Browser): Promise<Fetch
                     presentations.push({
                         where: p.querySelector("span.cin > a")?.textContent ?? "",
                         room: "",
-                        date: (p.querySelector("span.date")?.textContent ?? "") + ", " + (p.querySelector("span.disp-time")?.textContent ?? "no time"),
+                        date: (p.querySelector("span.date")?.textContent ?? "noDate"),
+                        time: (p.querySelector("span.disp-time")?.textContent ?? "no time"),
                         lang: null
                     })
                 })
 
                 return {
                     name,
-                    link,
+                    link: `http://www.filmcasino.at/${link}`,
                     presentations
                 }
             })
         })
+        
         page.close();
+        console.log("Filmcasino Fetch complete");
         resolve(filmcasinoCrawl)
     })
 }

@@ -20,7 +20,7 @@ export default async function getGartenbauData(browser: Browser): Promise<Fetchi
                     name,
                     date,
                     time,
-                    link
+                    link: `https://gartenbaukino.at${link}`
                 }
             })
 
@@ -44,6 +44,7 @@ export default async function getGartenbauData(browser: Browser): Promise<Fetchi
             return merger.films
         })
         page.close();
+        console.log("Gartenbau Fetch complete");
         resolve(gartenbauCrawl)
     })
 }

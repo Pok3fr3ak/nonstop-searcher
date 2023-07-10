@@ -30,7 +30,8 @@ export default async function getSchikanederOrTopkinoData(browser: Browser, kino
     const numOfCalls = callsPerDay.get(new Date().getDay())
     
     return new Promise(async (resolve, reject) => {
-        const searchlink = kino === "Schikaneder" ? `https://www.schikaneder.at/kino/kinoprogramm` : `https://www.topkino.at/kino/kinoprogramm`
+        const baseLink = kino === "Schikaneder" ? `https://www.schikaneder.at` : `https://www.topkino.at`
+        const additionalLink = "/kino/kinoprogramm"
         const today = new Date()
         const schikanederMerger = new Merger();
         let dateOffset = 0;
@@ -42,7 +43,7 @@ export default async function getSchikanederOrTopkinoData(browser: Browser, kino
                 const dateString = `${queryDate.getFullYear()}-${(queryDate.getMonth() + 1).toLocaleString("de-DE", { minimumIntegerDigits: 2, maximumFractionDigits: 0 })}-${(queryDate.getDate()).toLocaleString("de-DE", { minimumIntegerDigits: 2, maximumFractionDigits: 0 })}`
                 
 
-                await localPage.goto(`${searchlink}?date=${dateString}`, { waitUntil: "domcontentloaded" })
+                await localPage.goto(`${baseLink}${additionalLink}?date=${dateString}`, { waitUntil: "domcontentloaded" })
                 dateOffset++;
             
                 const content = await localPage.evaluate(() => {
@@ -72,7 +73,6 @@ export default async function getSchikanederOrTopkinoData(browser: Browser, kino
 
         content.forEach(day => {
             day.films.forEach(film => {
-                console.log(film);
                 const version = new Analyzer(film.infos).getVersion();
                 schikanederMerger.addPresentation(film.name, {
                     where: kino,
@@ -80,10 +80,11 @@ export default async function getSchikanederOrTopkinoData(browser: Browser, kino
                     date: film.tag,
                     time: film.time,
                     lang: version
-                }, film.link)
+                }, `${baseLink}${film.link}`)
             })
         })
 
+        console.log("Schikaneder/TopKino Fetch complete");
         resolve(schikanederMerger.films)
     })
 

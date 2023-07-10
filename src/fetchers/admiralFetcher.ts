@@ -47,14 +47,15 @@ export default async function getAdmiralData(browser: Browser): Promise<Fetching
                         presentations
                     }
                 }).then(data => {
-                    return data
+                    return { ...data, link: `https://admiralkino.at/${link}/`, }
                 })
                 localPage.close();
                 resolve(data)
             }))
         }
-
+        
         page.close();
+        console.log("Admiral Fetch complete");
         resolve(await Promise.all(promises))
     })
 }

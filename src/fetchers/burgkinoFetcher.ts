@@ -27,15 +27,15 @@ export default async function getBurgkinoData(browser: Browser): Promise<Fetchin
                         const dateObj = new Date(time);
                         presentations.push({
                             where: "Burg Kino",
-                            date: `${dateObj.getFullYear()}-${dateObj.getMonth() + 1}-${dateObj.getDate()}`,
-                            time: dateObj.toLocaleTimeString(),
+                            date: `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toLocaleString("de-DE", { minimumIntegerDigits: 2, maximumFractionDigits: 0 })}-${dateObj.getDate().toLocaleString("de-DE", { minimumIntegerDigits: 2, maximumFractionDigits: 0 }) }`,
+                            time: dateObj.toLocaleTimeString("de-DE", {hour: "2-digit", minute: "2-digit"}),
                             room,
                             lang: filmAndNonStopInfo
                         })
                     })
                     return ({
                         name,
-                        link,
+                        link: `https://www.burgkino.at${link}`,
                         presentations
                     })
                 })
@@ -50,6 +50,7 @@ export default async function getBurgkinoData(browser: Browser): Promise<Fetchin
         }
 
         page.close();
+        console.log("Burgkino Fetch complete");
         resolve(merger.films)
     })
 }

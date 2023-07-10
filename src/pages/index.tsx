@@ -9,38 +9,29 @@ import getAdmiralData from '@/fetchers/admiralFetcher';
 import getBurgkinoData from '@/fetchers/burgkinoFetcher';
 import getSchikanederOrTopkinoData from '@/fetchers/schikanederFetcher';
 import { FilmInfo } from '@/interfaces/filmInfo';
+import FilmCard from '@/components/filmCard';
+import { useState } from 'react';
 
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home(props: any) {
   console.log(props);
+  const [compact, setCompact] = useState(true);
 
   return (
     <main
     >
-        {
-          props.films.map((film: FilmInfo) => {
-            return(
-              <div className='filmCard'>
-                <h1>{film.name}</h1>
-                <ul>{
-                  film.presentations.map(pres => {
-                    return(
-                      <li>
-                        <h2>{pres.date}</h2>
-                        <h3>{pres.time}</h3>
-                        <p>{pres.where}</p>
-                          
-                        {pres.room !== '' ? <p>{pres.room}</p> : <></>}
-                                                
-                      </li>
-                    )
-                  })}</ul>
-              </div>
-            )
-          })
-        }
+      <button onClick={()=>{
+        setCompact(cmp => !cmp)
+      }}>SWITCH</button>
+      {
+        props.films.map((film: FilmInfo) => {
+          return (
+            <FilmCard film={film} compact={compact}/>
+          )
+        })
+      }
     </main>
   )
 }
@@ -74,18 +65,19 @@ export async function getStaticProps() {
 
   crawls.forEach(crawl => {
     crawl.forEach(film => {
-      collector.addPresenations(film.name, film.presentations)
+      collector.addPresenations(film.name, film.link, film.presentations)
     })
   })
 
-  
+
 
   await browser.close();
 
   return {
-    props:{
+    props: {
       films: collector.getFilms()
-    }
+    },
+    revalidate: (12 * 60 * 60)
     // Next.js will attempt to re-generate the page:
     // - When a request comes in
     // - At most once every 10 seconds// In seconds

@@ -18,13 +18,14 @@ export default async function getVotivKinoData(browser: Browser): Promise<Fetchi
                     if (i !== 0) {
                         let date = child.querySelector("a > span.week-show-default")?.getAttribute("id")?.split("has-show-on-")[1].toString();
                         let time = child.querySelector("time")?.textContent ?? "noTime";
-                        let where = child.querySelector("a span.location .kinotag")?.textContent ?? "-";
+                        let where = (child.querySelector("a span.location .kinotag")?.textContent ?? "-").replace(/\u2009/, " ");
                         let room = child.querySelector("a span.location")?.innerHTML;
 
-                        if (room !== undefined && room !== null) room = room?.split("|")[1].split("</span> ")[1].toString().replaceAll(/&nbsp;/g, " ");
+                        if (room !== undefined && room !== null) room = room?.split("|")[1].split("</span> ")[1].toString().replaceAll(/&nbsp;/g, " ").trim();
                         if (time !== null && time !== undefined) time = time.substring(3);
                         if (room === undefined || room === undefined) room = "";
-
+                        if (where.includes("France")) where = "De France"
+ 
                         if (date !== null && date !== undefined) {
                             presentations.push(
                                 {
@@ -46,7 +47,7 @@ export default async function getVotivKinoData(browser: Browser): Promise<Fetchi
         })
 
         page.close();
-
+        console.log("Votivkino/DeFrance Fetch complete");
         resolve(votivKinoCrawl)
     })
 }
